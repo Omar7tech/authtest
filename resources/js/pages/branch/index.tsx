@@ -1,40 +1,64 @@
 import BranchController from "@/actions/App/Http/Controllers/BranchController"
 import { DataPagination } from "@/components/data-pagination"
-import { Head } from "@inertiajs/react"
+import { EmptyState } from "@/components/empty-state"
+import { Button } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Head, Link } from "@inertiajs/react"
 import { PaginatedBranches } from "@/types/index.d"
-
+import { Building2 } from "lucide-react"
 
 const index = ({ branches }: { branches: PaginatedBranches }) => {
+  const hasData = branches.data.length > 0;
+
   return (
     <>
       <Head title="Branches" />
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b">
-              <th className="p-3">Name</th>
-              <th className="p-3">Code</th>
-              <th className="p-3">Phone</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">City</th>
-              <th className="p-3">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {branches.data.map(branch => (
-              <tr key={branch.id} className="border-b hover:bg-accent/50">
-                <td className="p-3">{branch.name}</td>
-                <td className="p-3">{branch.code}</td>
-                <td className="p-3">{branch.phone}</td>
-                <td className="p-3">{branch.email}</td>
-                <td className="p-3">{branch.city}</td>
-                <td className="p-3">{branch.is_active ? '✓' : '✗'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        {hasData ? (
+          <>
+            <Table>
+              <TableCaption>A list of all branches.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Code</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {branches.data.map(branch => (
+                  <TableRow key={branch.id}>
+                    <TableCell className="font-medium">{branch.name}</TableCell>
+                    <TableCell>{branch.code}</TableCell>
+                    <TableCell>{branch.phone}</TableCell>
+                    <TableCell>{branch.email}</TableCell>
+                    <TableCell>{branch.city}</TableCell>
+                    <TableCell className="text-center">{branch.is_active ? '✓' : '✗'}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-        <DataPagination data={branches} variant="outline" showFirstLast />
+            <DataPagination data={branches} variant="outline" showFirstLast />
+          </>
+        ) : (
+          <EmptyState
+            icon={Building2}
+            title="No branches found"
+            description="Get started by creating your first branch location."
+          />
+        )}
       </div>
     </>
   )
@@ -44,10 +68,10 @@ export default index
 
 
 index.layout = {
-    breadcrumbs: [
-        {
-            title: 'Branches',
-            href: BranchController.index(),
-        },
-    ],
+  breadcrumbs: [
+    {
+      title: 'Branches',
+      href: BranchController.index(),
+    },
+  ],
 };
