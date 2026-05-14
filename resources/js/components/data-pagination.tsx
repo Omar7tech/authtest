@@ -67,17 +67,22 @@ export function DataPagination<T>({
   return (
     <div className={cn('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', className)}>
       {showInfo && (
-        <div className="text-sm text-muted-foreground">
-          Showing <span className="font-medium">{from}</span> to <span className="font-medium">{to}</span> of{' '}
-          <span className="font-medium">{total}</span> results
+        <div className="text-xs text-muted-foreground sm:text-sm">
+          <span className="hidden sm:inline">
+            Showing <span className="font-medium">{from}</span> to <span className="font-medium">{to}</span> of{' '}
+            <span className="font-medium">{total}</span> results
+          </span>
+          <span className="sm:hidden">
+            {from}-{to} of {total}
+          </span>
         </div>
       )}
 
-      <nav className="flex items-center gap-1">
+      <nav className="flex items-center justify-center gap-0.5 sm:gap-1">
         {showFirstLast && current_page > 1 && firstPageUrl && (
           <Link
             href={firstPageUrl!}
-            className={cn(paginationVariants({ variant, size: 'icon' }))}
+            className={cn(paginationVariants({ variant, size: 'icon' }), 'hidden sm:inline-flex')}
             aria-label="Go to first page"
           >
             <ChevronsLeft className="h-4 w-4" />
@@ -87,7 +92,10 @@ export function DataPagination<T>({
         {links[0]?.url && (
           <Link
             href={links[0].url!}
-            className={cn(paginationVariants({ variant, size: variant === 'simple' ? 'default' : 'icon' }))}
+            className={cn(
+              paginationVariants({ variant, size: variant === 'simple' ? 'default' : 'icon' }),
+              'touch-manipulation'
+            )}
             aria-label="Go to previous page"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -95,11 +103,14 @@ export function DataPagination<T>({
           </Link>
         )}
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           {links.slice(1, -1).map((link, index) => {
             if (link.label === '...') {
               return (
-                <span key={`ellipsis-${index}`} className="flex h-9 w-9 items-center justify-center">
+                <span
+                  key={`ellipsis-${index}`}
+                  className="hidden h-9 w-9 items-center justify-center sm:flex"
+                >
                   <MoreHorizontal className="h-4 w-4" />
                   <span className="sr-only">More pages</span>
                 </span>
@@ -108,6 +119,9 @@ export function DataPagination<T>({
 
             if (!link.url) return null;
 
+            const isNearCurrent = Math.abs(parseInt(link.label) - current_page) <= 1;
+            const shouldShowOnMobile = link.active || isNearCurrent;
+
             return (
               <Link
                 key={index}
@@ -115,7 +129,9 @@ export function DataPagination<T>({
                 aria-current={link.active ? 'page' : undefined}
                 className={cn(
                   paginationVariants({ variant, size: 'icon' }),
-                  link.active && activePageVariants({ variant })
+                  link.active && activePageVariants({ variant }),
+                  'touch-manipulation',
+                  !shouldShowOnMobile && 'hidden sm:inline-flex'
                 )}
               >
                 {link.label}
@@ -127,7 +143,10 @@ export function DataPagination<T>({
         {links[links.length - 1]?.url && (
           <Link
             href={links[links.length - 1].url!}
-            className={cn(paginationVariants({ variant, size: variant === 'simple' ? 'default' : 'icon' }))}
+            className={cn(
+              paginationVariants({ variant, size: variant === 'simple' ? 'default' : 'icon' }),
+              'touch-manipulation'
+            )}
             aria-label="Go to next page"
           >
             {variant === 'simple' && <span className="hidden sm:inline">Next</span>}
@@ -138,7 +157,7 @@ export function DataPagination<T>({
         {showFirstLast && current_page < last_page && lastPageUrl && (
           <Link
             href={lastPageUrl!}
-            className={cn(paginationVariants({ variant, size: 'icon' }))}
+            className={cn(paginationVariants({ variant, size: 'icon' }), 'hidden sm:inline-flex')}
             aria-label="Go to last page"
           >
             <ChevronsRight className="h-4 w-4" />
