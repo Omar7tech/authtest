@@ -1,109 +1,75 @@
-import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Link } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
-import * as React from 'react';
+import { Link } from '@inertiajs/react'
+const Pagination = ({ paginateItems, className }: { paginateItems: any, className: string }) => {
 
-const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
- <nav
-  role="navigation"
-  aria-label="pagination"
-  className={cn('mx-auto flex w-full justify-center', className)}
-  {...props}
- />
-);
-Pagination.displayName = 'Pagination';
+	if (paginateItems.last_page == 1) return
 
-const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(
- ({ className, ...props }, ref) => (
-  <ul
-   ref={ref}
-   className={cn('flex flex-row items-center gap-1', className)}
-   {...props}
-  />
- )
-);
-PaginationContent.displayName = 'PaginationContent';
+	return (
+		<nav className={className} >
+			<ul className="flex flex-row items-center gap-1">
+				{/*  Previous Page Link  */}
+				<li>
+					{paginateItems.prev_page_url
+						? (
+							<Link className="pagination-page " href={paginateItems.prev_page_url}>
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="ml-0.5 h-5 w-5">
+									<path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
+								</svg>
+								Anterior
+							</Link >
+						)
+						: (
+							<span className="pagination-page ">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="ml-0.5 h-5 w-5">
+									<path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
+								</svg>
+								Anterior
+							</span>
+						)
+					}
+				</li>
 
-const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'>>(
- ({ className, ...props }, ref) => (
-  <li
-   ref={ref}
-   className={cn('', className)}
-   {...props}
-  />
- )
-);
-PaginationItem.displayName = 'PaginationItem';
+				{/*  Pagination Elements  */}
+				{paginateItems.links.slice(1, -1).map((link: any) => (
 
-type PaginationLinkProps = {
- isActive?: boolean;
-} & Pick<React.ComponentProps<typeof Button>, 'size'> &
- Omit<React.ComponentProps<typeof Link>, 'size'>;
+					(link.url && link.active)
+						? (
+							<li key={link.label} aria-disabled="true">
+								<span className="pagination-current-page">
+									{link.label}
+								</span>
+							</li>
+						) : (
+							<li key={link.label} className="hidden sm:block" aria-disabled="true">
+								<Link className="pagination-page" href={link.url}>
+									{link.label}
+								</Link >
+							</li>
+						)
+				))}
 
-const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
- <Link
-  aria-current={isActive ? 'page' : undefined}
-  className={cn(
-   buttonVariants({
-    variant: isActive ? 'outline' : 'ghost',
-    size
-   }),
-   className
-  )}
-  {...props}
- />
-);
-PaginationLink.displayName = 'PaginationLink';
-
-const PaginationPrevious = ({
- className,
- ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
- <PaginationLink
-  aria-label="Go to previous page"
-  size="default"
-  className={cn('gap-1 pl-2.5', className)}
-  {...props}
- >
-  <ChevronLeft className="h-4 w-4" />
-  <span>Previous</span>
- </PaginationLink>
-);
-PaginationPrevious.displayName = 'PaginationPrevious';
-
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
- <PaginationLink
-  aria-label="Go to next page"
-  size="default"
-  className={cn('gap-1 pr-2.5', className)}
-  {...props}
- >
-  <span>Next</span>
-  <ChevronRight className="h-4 w-4" />
- </PaginationLink>
-);
-PaginationNext.displayName = 'PaginationNext';
-
-const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
- <span
-  aria-hidden
-  className={cn('flex h-9 w-9 items-center justify-center', className)}
-  {...props}
- >
-  <MoreHorizontal className="h-4 w-4" />
-  <span className="sr-only">More pages</span>
- </span>
-);
-PaginationEllipsis.displayName = 'PaginationEllipsis';
-
-export {
- Pagination,
- PaginationContent,
- PaginationEllipsis,
- PaginationItem,
- PaginationLink,
- PaginationNext,
- PaginationPrevious
-};
-
+				{/*  Next Page Link  */}
+				<li>
+					{paginateItems.next_page_url
+						? (
+							<Link className="pagination-page " href={paginateItems.next_page_url}>
+								Siguiente
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="ml-0.5 h-5 w-5" >
+									<path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+								</svg>
+							</Link >
+						)
+						: (
+							<span className="pagination-page ">
+								Siguiente
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="ml-0.5 h-5 w-5" >
+									<path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+								</svg>
+							</span>
+						)
+					}
+				</li>
+			</ul>
+		</nav>
+	)
+}
+export default Pagination

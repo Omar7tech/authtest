@@ -17,3 +17,19 @@ export interface PaginatedResponse<T> {
  to: number;
  total: number;
 }
+
+export interface Branch {
+ id: number;
+ name: string;
+ code: string;
+ phone: string;
+ email: string;
+ country: string;
+ city: string;
+ address: string;
+ is_active: boolean;
+ created_at: string;
+ updated_at: string;
+}
+
+export type PaginatedBranches = PaginatedResponse<Branch>;
