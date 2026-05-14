@@ -9,6 +9,7 @@ import SettingsLayout from '@/layouts/settings/layout';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
+    
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
@@ -34,6 +35,7 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
+
 });
 
 // This will set light / dark mode on load...
