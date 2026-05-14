@@ -13,7 +13,8 @@ export default function Dashboard() {
                         <ChartAreaLegend />
                     </div>
                     <div className="relative  overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <ChartAreaLegend />                    </div>
+                        <ChartAreaLegend />
+                    </div>
                     <div className="relative  overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     </div>
                 </div>

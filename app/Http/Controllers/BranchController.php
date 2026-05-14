@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BranchController extends Controller
 {
@@ -13,7 +14,9 @@ class BranchController extends Controller
     public function index()
     {
         $branches = Branch::all();
-        
+        return Inertia::render('branch/index', [
+            'branches' => $branches,
+        ]);
     }
 
     /**

@@ -15,12 +15,21 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import BranchController from '@/actions/App/Http/Controllers/BranchController';
+
+
+
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Branches',
+        href: BranchController.index(),
+        icon: FolderGit2,
     },
 ];
 
