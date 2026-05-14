@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BranchController extends Controller
 {
@@ -13,7 +14,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branches = Branch::paginate(10);
+        $branches = QueryBuilder::for(Branch::class)->allowedFilters('name', 'email')->paginate(10);
         return Inertia::render('branch/index', [
             'branches' => $branches,
         ]);

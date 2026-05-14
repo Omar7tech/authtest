@@ -13,8 +13,16 @@ import {
 } from "@/components/ui/table"
 import { Head, Link } from "@inertiajs/react"
 import { PaginatedBranches } from "@/types/index.d"
-import { Building2 } from "lucide-react"
-
+import { Building2, MoreHorizontalIcon, Search } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 const index = ({ branches }: { branches: PaginatedBranches }) => {
   const hasData = branches.data.length > 0;
 
@@ -22,6 +30,13 @@ const index = ({ branches }: { branches: PaginatedBranches }) => {
     <>
       <Head title="Branches" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <InputGroup className="max-w-xs">
+          <InputGroupInput placeholder="Search..." />
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+          <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+        </InputGroup>
         {hasData ? (
           <>
             <Table>
@@ -44,7 +59,27 @@ const index = ({ branches }: { branches: PaginatedBranches }) => {
                     <TableCell>{branch.phone}</TableCell>
                     <TableCell>{branch.email}</TableCell>
                     <TableCell>{branch.city}</TableCell>
-                    <TableCell className="text-center">{branch.is_active ? '✓' : '✗'}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge className={branch.is_active ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'} variant="outline">{branch.is_active ? 'Active' : 'Inactive'}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="size-5">
+                            <MoreHorizontalIcon />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem variant="destructive">
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
