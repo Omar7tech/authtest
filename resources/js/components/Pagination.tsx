@@ -1,4 +1,4 @@
-import { ButtonProps, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
@@ -38,7 +38,7 @@ PaginationItem.displayName = 'PaginationItem';
 
 type PaginationLinkProps = {
  isActive?: boolean;
-} & Pick<ButtonProps, 'size'> &
+} & Pick<React.ComponentProps<typeof Button>, 'size'> &
  Omit<React.ComponentProps<typeof Link>, 'size'>;
 
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
