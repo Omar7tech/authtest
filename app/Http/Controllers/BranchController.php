@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateBranchRequest;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -71,15 +72,19 @@ class BranchController extends Controller
      */
     public function edit(Branch $branch)
     {
-        //
+        return Inertia::render('branch/edit', [
+            'branch' => $branch,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Branch $branch)
+    public function update(UpdateBranchRequest $request, Branch $branch)
     {
-        //
+        $branch->update($request->validated());
+
+        return redirect()->route('branches.index');
     }
 
     /**
@@ -87,14 +92,17 @@ class BranchController extends Controller
      */
     public function destroy(Branch $branch)
     {
-        //
+        $branch->delete();
+
+        return redirect()->route('branches.index');
     }
 
     public function toggleActive(Branch $branch)
     {
         $branch->update([
-            'is_active' => !$branch->is_active
+            'is_active' => ! $branch->is_active,
         ]);
+
         return back();
     }
 }

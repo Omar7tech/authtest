@@ -1,17 +1,27 @@
 import BranchController from "@/actions/App/Http/Controllers/BranchController"
 import { ColumnDef, DataTable } from "@/components/data-table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Head, router } from "@inertiajs/react"
+import { Head, Link, router } from "@inertiajs/react"
 import { Branch, PaginatedBranches } from "@/types/index.d"
 import { Building2, MoreHorizontalIcon } from "lucide-react"
+import { useState } from "react"
 
 interface Filters {
   filter?: Record<string, string>;
@@ -20,6 +30,8 @@ interface Filters {
 
 
 const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Filters }) => {
+  const [branchToDelete, setBranchToDelete] = useState<Branch | null>(null)
+
   const columns: ColumnDef<Branch>[] = [
     {
       key: 'name',
@@ -80,7 +92,7 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
       key: 'actions',
       header: 'Actions',
       className: 'text-right',
-      render: () => (
+      render: (branch) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="size-5">
@@ -89,10 +101,15 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Duplicate</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/branches/${branch.id}/edit`}>Edit</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() => setBranchToDelete(branch)}
+            >
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -115,14 +132,6 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
                 { label: 'Active', value: '1' },
                 { label: 'Inactive', value: '0' }
               ]
-            },
-            {
-              key: 'city',
-              placeholder: 'City',
-              options: [
-                { label: 'Dubai', value: 'Dubai' },
-                { label: 'Abu Dhabi', value: 'Abu Dhabi' }
-              ]
             }
           ]}
           currentFilters={filters}
@@ -134,6 +143,32 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
           }}
         />
       </div>
+
+      <AlertDialog open={!!branchToDelete} onOpenChange={() => setBranchToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Branch</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{branchToDelete?.name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                if (branchToDelete) {
+                  router.delete(`/branches/${branchToDelete.id}`, {
+                    onSuccess: () => setBranchToDelete(null)
+                  })
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

@@ -12,6 +12,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::controller(BranchController::class)->group(function () {
         Route::get('branches', 'index')->name('branches.index');
+        Route::get('branches/{branch}/edit', 'edit')->name('branches.edit');
+        Route::put('branches/{branch}', 'update')->name('branches.update');
+        Route::delete('branches/{branch}', 'destroy')->name('branches.destroy');
         Route::post('branches/{branch}/toggle-active', 'toggleActive')->name('branches.toggle-active');
     });
 });
