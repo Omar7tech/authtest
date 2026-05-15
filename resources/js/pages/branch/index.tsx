@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Head } from "@inertiajs/react"
+import { Head, router } from "@inertiajs/react"
 import { Branch, PaginatedBranches } from "@/types/index.d"
 import { Building2, MoreHorizontalIcon } from "lucide-react"
 
@@ -51,7 +51,22 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
       className: 'text-center',
       render: (branch) => (
         <Badge
-          onClick={() => BranchController.toggleActive({ id: branch.id! })}
+          onClick={() => {
+            router.optimistic((props: { branches: PaginatedBranches }) => ({
+              branches: {
+                ...props.branches,
+                data: props.branches.data.map((b: Branch) =>
+                  b.id === branch.id
+                    ? { ...b, is_active: !b.is_active }
+                    : b
+                )
+              }
+            })).post(`/branches/${branch.id}/toggle-active`, {}, {
+              preserveScroll: true,
+              preserveState: true,
+              showProgress: false
+            })
+          }}
           className={branch.is_active
             ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 cursor-pointer'
             : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 cursor-pointer'}
