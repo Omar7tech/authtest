@@ -1,9 +1,9 @@
 import BranchController from "@/actions/App/Http/Controllers/BranchController"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { Head, useForm } from "@inertiajs/react"
 import { Branch } from "@/types/index.d"
@@ -118,10 +118,10 @@ const edit = ({ branch }: { branch: Branch }) => {
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox
+                <Switch
                   id="is_active"
                   checked={data.is_active}
-                  onCheckedChange={(checked) => setData('is_active', checked as boolean)}
+                  onCheckedChange={(checked) => setData('is_active', checked)}
                 />
                 <Label htmlFor="is_active" className="cursor-pointer">Active</Label>
               </div>
