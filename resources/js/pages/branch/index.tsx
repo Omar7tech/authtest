@@ -101,11 +101,12 @@ const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Fi
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild >
               <Link href={`/branches/${branch.id}/edit`}>Edit</Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              variant="destructive"
+              variant="default"
+              className="text-red-600 focus:text-red-600 dark:text-red-400"
               onSelect={() => setBranchToDelete(branch)}
             >
               Delete
