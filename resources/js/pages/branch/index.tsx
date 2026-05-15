@@ -1,19 +1,7 @@
 import BranchController from "@/actions/App/Http/Controllers/BranchController"
-import { DataPagination } from "@/components/data-pagination"
-import { EmptyState } from "@/components/empty-state"
+import { ColumnDef, DataTable } from "@/components/data-table"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Head, Link } from "@inertiajs/react"
-import { PaginatedBranches } from "@/types/index.d"
-import { Building2, MoreHorizontalIcon, Search } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,79 +9,115 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-const index = ({ branches }: { branches: PaginatedBranches }) => {
-  const hasData = branches.data.length > 0;
+import { Head } from "@inertiajs/react"
+import { Branch, PaginatedBranches } from "@/types/index.d"
+import { Building2, MoreHorizontalIcon } from "lucide-react"
+
+interface Filters {
+  filter?: Record<string, string>;
+  sort?: string;
+}
+
+
+const index = ({ branches, filters }: { branches: PaginatedBranches; filters: Filters }) => {
+  const columns: ColumnDef<Branch>[] = [
+    {
+      key: 'name',
+      header: 'Name',
+      sortable: true,
+      className: 'font-medium'
+    },
+    {
+      key: 'code',
+      header: 'Code',
+      sortable: true
+    },
+    {
+      key: 'phone',
+      header: 'Phone'
+    },
+    {
+      key: 'email',
+      header: 'Email'
+    },
+    {
+      key: 'city',
+      header: 'City',
+      sortable: true
+    },
+    {
+      key: 'is_active',
+      header: 'Status',
+      className: 'text-center',
+      render: (branch) => (
+        <Badge
+          onClick={() => BranchController.toggleActive({ id: branch.id! })}
+          className={branch.is_active
+            ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 cursor-pointer'
+            : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 cursor-pointer'}
+          variant="outline"
+        >
+          {branch.is_active ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      className: 'text-right',
+      render: () => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="size-5">
+              <MoreHorizontalIcon />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+  ];
 
   return (
     <>
       <Head title="Branches" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-        <InputGroup className="max-w-xs">
-          <InputGroupInput placeholder="Search..." />
-          <InputGroupAddon>
-            <Search />
-          </InputGroupAddon>
-          <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
-        </InputGroup>
-        {hasData ? (
-          <>
-            <Table>
-              <TableCaption>A list of all branches.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>City</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {branches.data.map(branch => (
-                  <TableRow key={branch.id}>
-                    <TableCell className="font-medium">{branch.name}</TableCell>
-                    <TableCell>{branch.code}</TableCell>
-                    <TableCell>{branch.phone}</TableCell>
-                    <TableCell>{branch.email}</TableCell>
-                    <TableCell>{branch.city}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge className={branch.is_active ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'} variant="outline">{branch.is_active ? 'Active' : 'Inactive'}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="size-5">
-                            <MoreHorizontalIcon />
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem variant="destructive">
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <DataPagination data={branches} variant="outline" showFirstLast />
-          </>
-        ) : (
-          <EmptyState
-            icon={Building2}
-            title="No branches found"
-            description="Get started by creating your first branch location."
-          />
-        )}
+        <DataTable
+          data={branches}
+          columns={columns}
+          searchable={{ key: 'name', placeholder: 'Search branches...' }}
+          filters={[
+            {
+              key: 'is_active',
+              placeholder: 'Status',
+              options: [
+                { label: 'Active', value: '1' },
+                { label: 'Inactive', value: '0' }
+              ]
+            },
+            {
+              key: 'city',
+              placeholder: 'City',
+              options: [
+                { label: 'Dubai', value: 'Dubai' },
+                { label: 'Abu Dhabi', value: 'Abu Dhabi' }
+              ]
+            }
+          ]}
+          currentFilters={filters}
+          caption="A list of all branches."
+          emptyState={{
+            icon: Building2,
+            title: 'No branches found',
+            description: 'Get started by creating your first branch location.'
+          }}
+        />
       </div>
     </>
   )

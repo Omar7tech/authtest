@@ -12,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::controller(BranchController::class)->group(function () {
         Route::get('branches', 'index')->name('branches.index');
+        Route::post('branches/{branch}/toggle-active', 'toggleActive')->name('branches.toggle-active');
     });
 });
 
